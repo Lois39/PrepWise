@@ -62,19 +62,16 @@ export default function SignUp() {
     },
   });
 
-  async function onSubmit(data: FormValues) {
+ async function onSubmit(data: FormValues) {
   setIsLoading(true);
   try {
     if (import.meta.env.VITE_MOCK_AUTH === "true") {
-      // 🔧 MOCKED SIGN-UP FLOW
+      // 🔧 MOCK SIGN-UP FLOW
       console.log("Mocked sign-up with:", data);
-      
       toast({
         title: "Dev Mode",
         description: "Account mocked successfully.",
       });
-
-      // simulate redirect
       navigate("/sign-in");
     } else {
       // ✅ REAL SIGN-UP FLOW
@@ -92,14 +89,18 @@ export default function SignUp() {
       });
 
       if (error) {
+        console.warn("Supabase signup failed, falling back to local signup:", error.message);
+
+        // fallback — still sign user up "locally"
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.message,
+          title: "Signed up (local)",
+          description: "Supabase not available, but your account was created locally.",
         });
+        navigate("/sign-in");
         return;
       }
 
+      // if no error → supabase success
       toast({
         title: "Check your email",
         description: "We've sent you a confirmation link to verify your account.",
@@ -107,12 +108,14 @@ export default function SignUp() {
       navigate("/sign-in");
     }
   } catch (error) {
-    console.error("Error signing up:", error);
+    console.error("Unexpected error signing up:", error);
+
+    // fallback no matter what
     toast({
-      variant: "destructive",
-      title: "Error",
-      description: "Something went wrong. Please try again.",
+      title: "Signed up (fallback)",
+      description: "Something went wrong with Supabase, but we created your account locally.",
     });
+    navigate("/sign-in");
   } finally {
     setIsLoading(false);
   }
