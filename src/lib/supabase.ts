@@ -2,8 +2,8 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Set Supabase credentials
-const supabaseUrl = "https://yzqvcelbavgwqcrkdxxr.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6cXZjZWxiYXZnd3FjcmtkeHhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1Mzk0ODQsImV4cCI6MjA2MDExNTQ4NH0.Ad8EuVOEaqwGDHWUiOrYI_jQ7l0oyysJw0sh2kYzNBo";
+const supabaseUrl = "https://mwmdmhmqujxxsvujbwwl.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13bWRtaG1xdWp4eHN2dWpid3dsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NTI3ODAsImV4cCI6MjA3MjAyODc4MH0.EFMr5c2LVmSdo8gIhD4V0vVyD4uLHsfWboF1ruzI2Hk";
 
 // Create and export the Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
