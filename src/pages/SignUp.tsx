@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -32,9 +31,7 @@ const formSchema = z
     email: z.string().email({ message: "Please enter a valid email address" }),
     jobRole: z.string().min(1, { message: "Job role is required" }),
     yearsExperience: z.string().min(1, { message: "Years of experience is required" }),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters" }),
+    password: z.string().min(8, { message: "Password must be at least 8 characters" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -62,19 +59,9 @@ export default function SignUp() {
     },
   });
 
- async function onSubmit(data: FormValues) {
-  setIsLoading(true);
-  try {
-    if (import.meta.env.VITE_MOCK_AUTH === "true") {
-      // 🔧 MOCK SIGN-UP FLOW
-      console.log("Mocked sign-up with:", data);
-      toast({
-        title: "Dev Mode",
-        description: "Account mocked successfully.",
-      });
-      navigate("/sign-in");
-    } else {
-      // ✅ REAL SIGN-UP FLOW
+  async function onSubmit(data: FormValues) {
+    setIsLoading(true);
+    try {
       const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -89,37 +76,30 @@ export default function SignUp() {
       });
 
       if (error) {
-        console.warn("Supabase signup failed, falling back to local signup:", error.message);
-
-        // fallback — still sign user up "locally"
         toast({
-          title: "Signed up (local)",
-          description: "Supabase not available, but your account was created locally.",
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
         });
-        navigate("/sign-in");
         return;
       }
 
-      // if no error → supabase success
       toast({
         title: "Check your email",
         description: "We've sent you a confirmation link to verify your account.",
       });
       navigate("/sign-in");
+    } catch (error) {
+      console.error("Unexpected error signing up:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("Unexpected error signing up:", error);
-
-    // fallback no matter what
-    toast({
-      title: "Signed up (fallback)",
-      description: "Something went wrong with Supabase, but we created your account locally.",
-    });
-    navigate("/sign-in");
-  } finally {
-    setIsLoading(false);
   }
-}
 
   return (
     <AuthLayout
@@ -136,6 +116,7 @@ export default function SignUp() {
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Full Name */}
           <FormField
             control={form.control}
             name="fullName"
@@ -156,6 +137,7 @@ export default function SignUp() {
             )}
           />
 
+          {/* Email */}
           <FormField
             control={form.control}
             name="email"
@@ -176,6 +158,7 @@ export default function SignUp() {
             )}
           />
 
+          {/* Job Role + Years of Experience */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormField
               control={form.control}
@@ -183,10 +166,7 @@ export default function SignUp() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700">Job Role</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="border-gray-300">
                         <SelectValue placeholder="Select your job role" />
@@ -216,10 +196,7 @@ export default function SignUp() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-gray-700">Years of Experience</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="border-gray-300">
                         <SelectValue placeholder="Select years of experience" />
@@ -239,6 +216,7 @@ export default function SignUp() {
             />
           </div>
 
+          {/* Password */}
           <FormField
             control={form.control}
             name="password"
@@ -274,6 +252,7 @@ export default function SignUp() {
             )}
           />
 
+          {/* Confirm Password */}
           <FormField
             control={form.control}
             name="confirmPassword"
@@ -309,6 +288,7 @@ export default function SignUp() {
             )}
           />
 
+          {/* Submit */}
           <Button
             type="submit"
             className="w-full bg-interview-primary hover:bg-interview-secondary text-white font-medium py-2.5"
